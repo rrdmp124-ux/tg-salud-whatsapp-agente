@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: tg-salud-whatsapp-agente
+    runtime: node
+    # Para 24/7 real usa un plan de pago: el plan gratuito de Render duerme el servicio
+    # tras unos minutos sin tráfico y los mensajes llegarían con retraso.
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: ZERNIO_API_KEY
+        sync: false
+      - key: ZERNIO_WEBHOOK_SECRET
+        sync: false
+      - key: ZERNIO_ACCOUNT_ID
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        value: claude-sonnet-5-5
+      - key: HANDOFF_HOURS
+        value: "4"

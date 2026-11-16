@@ -1,0 +1,12 @@
+{
+  "name": "tg-salud-whatsapp-agente",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Agente de IA para WhatsApp Business de TG salud y bienestar (Zernio + Claude)",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-local.mjs"
+  }
+}
