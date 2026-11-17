@@ -1,31 +1,18 @@
 {
-  "configurado": false,
-  "_instrucciones": "Reemplaza lo que dice EDITA y completa precio_bs de cada producto (un número en bolivianos). Cuando termines, cambia \"configurado\" a true. Mientras esté en false, el agente no responde a clientes. venta: \"bot\" = el asistente puede registrar el pedido (queda pendiente de validación del profesional); \"persona\" = el asistente solo informa lo que dice el rotulado y pasa el chat a una persona. Un producto sin precio nunca se cotiza ni se registra.",
+  "configurado": true,
+  "_instrucciones": "Para agregar un precio, escribe el número en precio_bs (en bolivianos), por ejemplo 1150. venta: \"bot\" = el asistente puede registrar el pedido (queda pendiente de validación); \"persona\" = el asistente informa y pasa el chat a una persona. Un producto sin precio nunca se cotiza ni se registra. Puedes agregar ciudad_cobertura, horario_atencion_humana, costo_envio, formas_de_pago y preguntas_frecuentes cuando quieras. Si pones \"configurado\": false, el agente deja de responder a clientes.",
   "nombre": "TG salud y bienestar",
-  "descripcion": "EDITA: describe en 2 o 3 frases qué ofrece TG salud y bienestar y quién atiende (profesional certificado).",
-  "ciudad_cobertura": "EDITA: ciudades donde entregas o haces envíos (ej. Santa Cruz de la Sierra y envíos nacionales).",
-  "horario_atencion_humana": "EDITA: ej. lunes a sábado de 9:00 a 18:00 (hora de Bolivia).",
-  "entrega": "EDITA: ej. recojo en tienda o entrega a domicilio en 24 a 48 horas.",
-  "costo_envio": "EDITA: ej. Bs 15 dentro de la ciudad; envíos nacionales se coordinan con una persona del equipo.",
-  "formas_de_pago": [
-    "EDITA: ej. Transferencia bancaria o QR (el equipo envía los datos al confirmar el pedido)",
-    "EDITA: ej. Pago contra entrega en la ciudad"
-  ],
+  "descripcion": "TG salud y bienestar ofrece productos de bienestar. Un profesional certificado del equipo atiende los pedidos y los valida.",
+  "ciudad_cobertura": "",
+  "horario_atencion_humana": "",
+  "entrega": "El cliente envía su ubicación y el equipo coordina la entrega después de validar el pedido.",
+  "costo_envio": "",
+  "formas_de_pago": [],
   "politicas": [
     "Todo pedido queda pendiente hasta que un profesional certificado del equipo lo valide; recién entonces se coordina el pago y el envío.",
-    "El asistente no da dosis ni indicaciones de aplicación: esas consultas las atiende el profesional del equipo.",
-    "EDITA: cambios, devoluciones y otras políticas reales."
+    "El asistente no da dosis ni indicaciones de aplicación: esas consultas las atiende el profesional del equipo."
   ],
-  "preguntas_frecuentes": [
-    {
-      "p": "EDITA: ¿Hacen envíos a otras ciudades?",
-      "r": "EDITA: respuesta real."
-    },
-    {
-      "p": "EDITA: ¿Los productos tienen registro sanitario?",
-      "r": "EDITA: respuesta real."
-    }
-  ],
+  "preguntas_frecuentes": [],
   "productos": [
     {
       "id": "ghk-cu-100",
@@ -168,14 +155,14 @@
       "fabricante": "Alluvi Healthcare",
       "descripcion": "Mezcla de péptidos BPC-157 10 mg, TB-500 10 mg y GHK-Cu 50 mg (10/10/50 mg).",
       "presentacion": "2 plumas inyectoras precargadas, uso subcutáneo. Conservar entre 2 °C y 8 °C.",
-      "precio_bs": null,
+      "precio_bs": 650,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
     },
     {
       "id": "lipoleless-15",
-      "nombre": "Lipoleless 15 (Tirzepatida 15 mg/0,5 mL)",
+      "nombre": "Lipoleless 15 — caja de 4 viales (Tirzepatida 15 mg/0,5 mL)",
       "marca": "Lipoleless",
       "fabricante": "Laboratorio Eticos",
       "descripcion": "Tirzepatida, agonista dual de los receptores GIP y GLP-1.",
@@ -187,13 +174,13 @@
     },
     {
       "id": "tirzec-15",
-      "nombre": "Tirzec 15 (Tirzepatida 15 mg/0,5 mL)",
+      "nombre": "Tirzec 15 — caja de 4 viales (Tirzepatida 15 mg/0,5 mL)",
       "marca": "Tirzec",
       "fabricante": "Quimfa",
       "descripcion": "Tirzepatida, solución inyectable de vía subcutánea y uso semanal.",
       "presentacion": "Estuche con 4 viales de 0,5 mL de 15 mg/0,5 mL. Almacenamiento entre 2 °C y 8 °C. Sello holográfico de seguridad.",
       "registro_sanitario": "Cert. N° MS-006421/1 (según el rotulado)",
-      "precio_bs": null,
+      "precio_bs": 1200,
       "disponible": true,
       "venta": "bot",
       "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
@@ -212,12 +199,12 @@
     },
     {
       "id": "tg-15",
-      "nombre": "T.G. 15 (Tirzepatida 15 mg/0,5 mL)",
+      "nombre": "T.G. 15 — caja de 4 viales (Tirzepatida 15 mg/0,5 mL)",
       "marca": "T.G.",
       "fabricante": "Indufar CISA",
       "descripcion": "Tirzepatida, solución inyectable de vía subcutánea.",
       "presentacion": "Estuche con 4 frascos viales de 0,5 mL de 15 mg/0,5 mL.",
-      "precio_bs": null,
+      "precio_bs": 1200,
       "disponible": true,
       "venta": "bot",
       "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
@@ -229,10 +216,94 @@
       "fabricante": "Laboratorio Eticos",
       "descripcion": "Tirzepatida, solución inyectable.",
       "presentacion": "Vial multidosis de 2,4 mL (15 mg/0,6 mL) con 4 dosis fijas de 0,6 mL.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "bot",
       "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
+    },
+    {
+      "id": "lipoleless-15-vial",
+      "nombre": "Lipoleless 15 — vial individual (Tirzepatida 15 mg/0,5 mL)",
+      "marca": "Lipoleless",
+      "fabricante": "Laboratorio Eticos",
+      "descripcion": "Tirzepatida, agonista dual de los receptores GIP y GLP-1.",
+      "presentacion": "Un vial individual de 0,5 mL (15 mg/0,5 mL), según el rotulado de la caja de 4 viales.",
+      "precio_bs": 320,
+      "disponible": true,
+      "venta": "bot",
+      "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
+    },
+    {
+      "id": "tirzec-15-vial",
+      "nombre": "Tirzec 15 — vial individual (Tirzepatida 15 mg/0,5 mL)",
+      "marca": "Tirzec",
+      "fabricante": "Quimfa",
+      "descripcion": "Tirzepatida, solución inyectable de vía subcutánea y uso semanal.",
+      "presentacion": "Un vial individual de 0,5 mL (15 mg/0,5 mL), según el rotulado de la caja de 4 viales.",
+      "precio_bs": 320,
+      "disponible": true,
+      "venta": "bot",
+      "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
+    },
+    {
+      "id": "tg-15-vial",
+      "nombre": "T.G. 15 — vial individual (Tirzepatida 15 mg/0,5 mL)",
+      "marca": "T.G.",
+      "fabricante": "Indufar CISA",
+      "descripcion": "Tirzepatida, solución inyectable de vía subcutánea.",
+      "presentacion": "Un vial individual de 0,5 mL (15 mg/0,5 mL), según el rotulado de la caja de 4 viales.",
+      "precio_bs": 320,
+      "disponible": true,
+      "venta": "bot",
+      "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
+    },
+    {
+      "id": "shampoo",
+      "nombre": "Shampoo",
+      "descripcion": "Shampoo.",
+      "precio_bs": 65,
+      "disponible": true,
+      "venta": "bot"
+    },
+    {
+      "id": "acondicionador",
+      "nombre": "Acondicionador",
+      "descripcion": "Acondicionador.",
+      "precio_bs": 65,
+      "disponible": true,
+      "venta": "bot"
+    },
+    {
+      "id": "portavial-corazon",
+      "nombre": "Portavial de corazón",
+      "descripcion": "Portavial (estuche para llevar viales) con forma de corazón.",
+      "precio_bs": 30,
+      "disponible": true,
+      "venta": "bot"
+    },
+    {
+      "id": "portavial-regalo",
+      "nombre": "Portavial de regalo",
+      "descripcion": "Portavial (estuche para llevar viales) en presentación de regalo.",
+      "precio_bs": 30,
+      "disponible": true,
+      "venta": "bot"
+    },
+    {
+      "id": "portavial-rosas",
+      "nombre": "Portavial de rosas",
+      "descripcion": "Portavial (estuche para llevar viales) con diseño de rosas.",
+      "precio_bs": 20,
+      "disponible": true,
+      "venta": "bot"
+    },
+    {
+      "id": "portavial-stanley",
+      "nombre": "Portavial Stanley",
+      "descripcion": "Portavial (estuche para llevar viales) modelo Stanley.",
+      "precio_bs": 15,
+      "disponible": true,
+      "venta": "bot"
     }
   ]
 }
