@@ -2,8 +2,6 @@ services:
   - type: web
     name: tg-salud-whatsapp-agente
     runtime: node
-    # Para 24/7 real usa un plan de pago: el plan gratuito de Render duerme el servicio
-    # tras unos minutos sin tráfico y los mensajes llegarían con retraso.
     plan: free
     buildCommand: npm install
     startCommand: npm start
