@@ -5,9 +5,11 @@
   "descripcion": "TG salud y bienestar ofrece productos de bienestar. Un profesional certificado del equipo atiende los pedidos y los valida.",
   "ciudad_cobertura": "",
   "horario_atencion_humana": "",
-  "entrega": "El cliente envía su ubicación y el equipo coordina la entrega después de validar el pedido.",
+  "entrega": "Envíos: el cliente envía nombre completo, ubicación y comprobante del pago por QR; el equipo valida el pago y coordina el envío.",
   "costo_envio": "",
-  "formas_de_pago": [],
+  "formas_de_pago": [
+    "Solo por QR. El cliente envía la foto del comprobante de pago."
+  ],
   "politicas": [
     "Todo pedido queda pendiente hasta que un profesional certificado del equipo lo valide; recién entonces se coordina el pago y el envío.",
     "El asistente no da dosis ni indicaciones de aplicación: esas consultas las atiende el profesional del equipo."
@@ -20,7 +22,7 @@
       "marca": "Peptides World",
       "descripcion": "Tripéptido de cobre (glicil-L-histidil-L-lisina con Cu²⁺).",
       "presentacion": "Vial multidosis de 100 mg, uso subcutáneo, según el rotulado.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -30,7 +32,7 @@
       "nombre": "PT-141 (Bremelanotida) 10 mg",
       "descripcion": "Heptapéptido cíclico análogo de la α-MSH. Agonista de receptores de melanocortina (MC3R/MC4R).",
       "presentacion": "Vial multidosis de 10 mg, uso subcutáneo.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -40,7 +42,7 @@
       "nombre": "Tesamorelina 10 mg (rotulado «Tesamorelin DE»)",
       "descripcion": "Análogo sintético de GHRH de 44 aminoácidos, con grupo trans-3-hexenoílo en el extremo N-terminal. Estimula la liberación de hormona de crecimiento.",
       "presentacion": "Vial multidosis de 10 mg.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -50,7 +52,7 @@
       "nombre": "Semax 10 mg",
       "descripcion": "Heptapéptido sintético derivado del fragmento ACTH(4-7) con la secuencia Pro-Gly-Pro añadida. Neuropéptido.",
       "presentacion": "Vial multidosis de 10 mg.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -61,7 +63,7 @@
       "marca": "Peptides World",
       "descripcion": "Fragmento sintético de la hormona de crecimiento humana (región 177-191, con tirosina añadida).",
       "presentacion": "Vial multidosis de 5 mg, uso subcutáneo.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -71,7 +73,7 @@
       "nombre": "DSIP 10 mg",
       "descripcion": "Péptido inductor del sueño delta (Delta Sleep-Inducing Peptide). Nonapéptido (Trp-Ala-Gly-Gly-Asp-Ala-Ser-Gly-Glu).",
       "presentacion": "Vial multidosis de 10 mg.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -82,7 +84,7 @@
       "marca": "Peptides World",
       "descripcion": "Pentadecapéptido sintético (15 aminoácidos) derivado de una proteína protectora gástrica (Body Protection Compound).",
       "presentacion": "Vial multidosis de 10 mg, uso subcutáneo.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -92,7 +94,7 @@
       "nombre": "TB-500 5 mg",
       "descripcion": "Fragmento sintético de la timosina β4 (región de unión a actina).",
       "presentacion": "Vial multidosis de 5 mg, uso subcutáneo.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -103,7 +105,7 @@
       "marca": "Peptides World",
       "descripcion": "Combinación de CJC-1295 (análogo de GHRH) e ipamorelina (pentapéptido agonista del receptor de grelina GHS-R1a). Ambos estimulan la liberación de hormona de crecimiento.",
       "presentacion": "10 mg + 10 mg, vial multidosis, uso subcutáneo.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -123,7 +125,7 @@
       "nombre": "GLOW",
       "descripcion": "Mezcla de péptidos (blend). La imagen no especifica composición ni contenido por componente.",
       "presentacion": "Vial multidosis, uso subcutáneo, 99 % de pureza según el rotulado.",
-      "precio_bs": null,
+      "precio_bs": 1200,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -143,7 +145,17 @@
       "nombre": "Retatrutide 40 mg (pluma)",
       "descripcion": "Triple agonista de los receptores GLP-1, GIP y glucagón.",
       "presentacion": "Caja con 1 pluma de 4 dosis de 10 mg, 12 agujas descartables y 1 manual de instrucciones. Administración semanal, según el rotulado.",
-      "precio_bs": null,
+      "precio_bs": 1200,
+      "disponible": true,
+      "venta": "persona",
+      "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
+    },
+    {
+      "id": "retatrutide-125-vial",
+      "nombre": "Retatrutide 125 mg / 5 mL (vial)",
+      "descripcion": "Triple agonista de los receptores GLP-1, GIP y glucagón.",
+      "presentacion": "Vial de 125 mg en 5 mL.",
+      "precio_bs": 1600,
       "disponible": true,
       "venta": "persona",
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
@@ -167,7 +179,7 @@
       "fabricante": "Laboratorio Eticos",
       "descripcion": "Tirzepatida, agonista dual de los receptores GIP y GLP-1.",
       "presentacion": "Solución inyectable de 15 mg/0,5 mL; estuche con 4 viales de 0,5 mL en blíster, vía subcutánea.",
-      "precio_bs": null,
+      "precio_bs": 1200,
       "disponible": true,
       "venta": "bot",
       "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
@@ -192,7 +204,7 @@
       "fabricante": "Quimfa",
       "descripcion": "Tirzepatida, solución inyectable.",
       "presentacion": "Estuche con 1 vial de 2 mL, concentración de 2,5 mg/0,5 mL.",
-      "precio_bs": null,
+      "precio_bs": 1150,
       "disponible": true,
       "venta": "bot",
       "advertencias": "Medicamento inyectable de uso subcutáneo. Las dudas de uso las orienta solo el profesional del equipo."
@@ -259,16 +271,16 @@
     },
     {
       "id": "shampoo",
-      "nombre": "Shampoo",
-      "descripcion": "Shampoo.",
+      "nombre": "Shampoo anti caída",
+      "descripcion": "Shampoo anti caída.",
       "precio_bs": 65,
       "disponible": true,
       "venta": "bot"
     },
     {
       "id": "acondicionador",
-      "nombre": "Acondicionador",
-      "descripcion": "Acondicionador.",
+      "nombre": "Acondicionador anti caída",
+      "descripcion": "Acondicionador anti caída.",
       "precio_bs": 65,
       "disponible": true,
       "venta": "bot"
@@ -305,5 +317,7 @@
       "disponible": true,
       "venta": "bot"
     }
-  ]
+  ],
+  "qr_pago_url": "https://drive.google.com/file/d/1r-Cls8AsrM2iKKRdLjeKwgMp-eIVwa4q/view?usp=sharing",
+  "ubicacion_local_url": "https://maps.app.goo.gl/HnfbWUmsb8iDTFRN8"
 }
