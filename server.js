@@ -135,7 +135,7 @@ const states = new Map(); // conversationId -> estado
 function getState(id) {
   let s = states.get(id);
   if (!s) {
-    s = { history: [], pausedUntil: 0, lastNonText: 0, touched: Date.now() };
+    s = { history: [], pausedUntil: 0, lastNonText: 0, comprobante: false, touched: Date.now() };
     states.set(id, s);
   }
   s.touched = Date.now();
@@ -146,7 +146,7 @@ function pushTurn(st, role, text) {
   const last = st.history[st.history.length - 1];
   if (last && last.role === role) last.text += '\n' + text;
   else st.history.push({ role, text });
-  while (st.history.length > 30) st.history.shift();
+  while (st.history.length > 12) st.history.shift();
   while (st.history.length && st.history[0].role !== 'user') st.history.shift();
 }
 
@@ -175,11 +175,11 @@ const TOOLS = [
   {
     name: 'registrar_pedido',
     description:
-      'Registra un pedido confirmado por el cliente. Úsala SOLO cuando el cliente ya confirmó productos, cantidades, nombre, forma de entrega y método de pago. El total lo calcula el sistema. El pedido queda pendiente hasta que un profesional del equipo lo valide. No sirve para productos que cierra una persona ni para productos sin precio.',
+      'Registra un pedido confirmado por el cliente. Úsala SOLO cuando el cliente ya dio producto y cantidad, nombre completo y ubicación, y envió el comprobante de pago por QR. El total lo calcula el sistema. El pedido queda pendiente hasta que un profesional del equipo lo valide. No sirve para productos que cierra una persona ni para productos sin precio.',
     input_schema: {
       type: 'object',
       properties: {
-        nombre_cliente: { type: 'string', description: 'Nombre del cliente' },
+        nombre_cliente: { type: 'string', description: 'Nombre completo del cliente' },
         items: {
           type: 'array',
           description: 'Productos del pedido',
@@ -193,7 +193,6 @@ const TOOLS = [
           },
         },
         entrega: { type: 'string', description: 'Ubicación de entrega: el texto de la ubicación compartida por el cliente (tal como aparece, con [Ubicación compartida: ...]) o la dirección/referencia que escribió' },
-        metodo_pago: { type: 'string', description: 'Método de pago, solo si el cliente lo mencionó (opcional)' },
         notas: { type: 'string', description: 'Observaciones del cliente (opcional)' },
       },
       required: ['nombre_cliente', 'items', 'entrega'],
@@ -214,7 +213,8 @@ const TOOLS = [
 async function runTool(tu, st, ctx) {
   try {
     if (tu.name === 'registrar_pedido') {
-      const { nombre_cliente, items, entrega, metodo_pago, notas } = tu.input || {};
+      const { nombre_cliente, items, entrega, notas } = tu.input || {};
+      if (!st.comprobante) return JSON.stringify({ ok: false, error: 'Aún no llegó el comprobante de pago (imagen). Pídelo; no registres sin él.' });
       if (!Array.isArray(items) || !items.length) return JSON.stringify({ ok: false, error: 'El pedido no tiene productos' });
       const detalle = [];
       let total = 0;
@@ -237,11 +237,12 @@ async function runTool(tu, st, ctx) {
         cliente_whatsapp: ctx.cliente,
         nombre_cliente,
         entrega,
-        metodo_pago: metodo_pago || '',
+        metodo_pago: 'QR',
+        comprobante_recibido: true,
         notas: notas || '',
         items: detalle,
         total_bs: total,
-        estado: 'pendiente de validación del profesional',
+        estado: 'pendiente de validación del pago por el profesional',
       };
       try {
         fs.appendFileSync(cfg.ordersFile, JSON.stringify(pedido) + '\n');
@@ -260,7 +261,8 @@ async function runTool(tu, st, ctx) {
         }
       }
       log('info', 'pedido registrado', { codigo, total_bs: total });
-      return JSON.stringify({ ok: true, codigo, total_bs: total, detalle });
+      st.comprobante = false;
+      return JSON.stringify({ ok: true, codigo, total_bs: total });
     }
 
     if (tu.name === 'pasar_a_humano') {
@@ -289,8 +291,8 @@ async function callAnthropic(messages) {
       },
       body: JSON.stringify({
         model: cfg.model,
-        max_tokens: 700,
-        system: SYSTEM_PROMPT,
+        max_tokens: 350,
+        system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
         tools: TOOLS,
         messages,
       }),
@@ -363,7 +365,15 @@ async function answer({ convId, accountId, msg }) {
     return;
   }
 
-  const text = extractText(msg);
+  let text = extractText(msg);
+  if (!text) {
+    const adj = Array.isArray(msg.attachments) ? msg.attachments : [];
+    const tipo = String(adj[0]?.type || msg.type || msg.messageType || '').toLowerCase();
+    if (adj.length && /image|photo|document|file|pdf|sticker/.test(tipo || 'image')) {
+      st.comprobante = true;
+      text = '[El cliente envió una imagen/archivo (posible comprobante de pago)]';
+    }
+  }
   if (!text) {
     log('info', 'mensaje sin texto', { convId, campos: Object.keys(msg), metadata: Object.keys(msg.metadata || {}) });
     if (Date.now() - st.lastNonText > 10 * 60_000) {
@@ -371,7 +381,7 @@ async function answer({ convId, accountId, msg }) {
       await sendMessage(
         convId,
         accountId,
-        'Hola 👋 Por ahora solo puedo leer mensajes de texto y ubicaciones. ¿Me cuentas por escrito en qué te puedo ayudar? Si es tu ubicación, también puedes escribir tu dirección o una referencia.',
+        'Hola 👋 Por ahora solo leo texto, ubicaciones e imágenes. ¿Me escribes tu consulta?',
       );
     }
     return;
