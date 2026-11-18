@@ -23,6 +23,12 @@ const cfg = {
   negocioFile: env.NEGOCIO_FILE || new URL('./negocio.json', import.meta.url),
   handoffHours: Number(env.HANDOFF_HOURS || 4),
   allowUnconfigured: env.ALLOW_UNCONFIGURED === '1',
+  // Solo se responde a mensajes recientes: los más viejos que esto (minutos) se ignoran, aunque Zernio los reintente.
+  maxAgeMinutes: Number(env.MAX_MESSAGE_AGE_MINUTES || 10),
+  // Opcional: fecha/hora (ISO, ej. 2026-11-17T21:00:00Z) desde la cual se responde; lo anterior se ignora.
+  activeFrom: env.ACTIVE_FROM ? Date.parse(env.ACTIVE_FROM) : NaN,
+  // Prueba controlada: si se define, el agente SOLO responde a estos números (solo dígitos, separados por coma).
+  allowedNumbers: String(env.ALLOWED_NUMBERS || '').split(',').map((x) => x.replace(/\D/g, '')).filter(Boolean),
 };
 
 const log = (lvl, msg, extra = {}) =>
@@ -59,6 +65,10 @@ const sinPrecio = (negocio.productos || [])
   .map((p) => p.id);
 if (sinPrecio.length) {
   log('warn', 'Hay productos sin precio: el agente no los cotizará ni los registrará hasta que cargues precio_bs', { productos: sinPrecio });
+}
+
+if (cfg.allowedNumbers.length) {
+  log('info', `Modo prueba: el agente solo responderá a ${cfg.allowedNumbers.length} número(s)`);
 }
 
 const SYSTEM_PROMPT = buildSystemPrompt(negocio);
@@ -395,6 +405,22 @@ async function processEvent(event) {
 
   const accountId = event.account?.id || event.account?.accountId;
   if (accountId !== cfg.accountId) return;
+  // Filtro de antigüedad: nunca responder a mensajes viejos (reintentos o pendientes de cuando el servicio estuvo caído).
+  const sentAt = Date.parse(msg.sentAt || event.timestamp || '');
+  if (Number.isFinite(sentAt)) {
+    const ageMin = (Date.now() - sentAt) / 60000;
+    if (ageMin > cfg.maxAgeMinutes || (Number.isFinite(cfg.activeFrom) && sentAt < cfg.activeFrom)) {
+      log('info', 'mensaje viejo ignorado', { minutos: Math.round(ageMin) });
+      return;
+    }
+  }
+  if (cfg.allowedNumbers.length) {
+    const nums = [msg.sender?.phoneNumber, msg.sender?.id].map((x) => String(x || '').replace(/\D/g, '')).filter(Boolean);
+    if (!nums.some((n) => cfg.allowedNumbers.includes(n))) {
+      log('info', 'mensaje ignorado: número fuera de la lista de prueba');
+      return;
+    }
+  }
   if (alreadySeen(event.id)) return;
   if (!configurado) {
     log('warn', 'mensaje ignorado: negocio.json sin configurar');
@@ -434,7 +460,7 @@ const server = http.createServer((req, res) => {
   const url = (req.url || '').split('?')[0];
   if (req.method === 'POST' && url === '/webhooks/zernio') return void handleWebhook(req, res);
   if (req.method === 'GET' && url === '/health') {
-    res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ ok: true, configurado, productos_sin_precio: sinPrecio.length }));
+    res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify({ ok: true, configurado, modo_prueba: cfg.allowedNumbers.length > 0, productos_sin_precio: sinPrecio.length }));
     return;
   }
   res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' }).end('Agente de TG salud y bienestar activo');
@@ -442,4 +468,4 @@ const server = http.createServer((req, res) => {
 
 process.on('unhandledRejection', (e) => log('error', 'unhandledRejection', { err: String(e).slice(0, 300) }));
 
-server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado }));
+server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado, maxMinutosAntiguedad: cfg.maxAgeMinutes }));
