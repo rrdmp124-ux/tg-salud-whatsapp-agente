@@ -538,6 +538,3 @@ const server = http.createServer((req, res) => {
 process.on('unhandledRejection', (e) => log('error', 'unhandledRejection', { err: String(e).slice(0, 300) }));
 
 server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado, maxMinutosAntiguedad: cfg.maxAgeMinutes }));
-process.on('unhandledRejection', (e) => log('error', 'unhandledRejection', { err: String(e).slice(0, 300) }));
-
-server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado, maxMinutosAntiguedad: cfg.maxAgeMinutes }));
