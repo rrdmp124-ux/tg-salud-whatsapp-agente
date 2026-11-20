@@ -199,6 +199,35 @@ const TOOLS = [
     },
   },
   {
+    name: 'calcular_total',
+    description:
+      'Calcula con exactitud el total en Bs de los productos y cantidades. Úsala SIEMPRE antes de decirle un total al cliente; nunca sumes tú.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { id: { type: 'string' }, cantidad: { type: 'integer', minimum: 1 } },
+            required: ['id', 'cantidad'],
+          },
+        },
+      },
+      required: ['items'],
+    },
+  },
+  {
+    name: 'no_responder',
+    description:
+      'Úsala cuando la conversación NO es con un cliente comprador sino con la persona que transporta o entrega el producto (transportista, chofer, encomienda, mensajero) para coordinar recojo o entrega. El asistente se queda en silencio en este chat y no envía ningún mensaje.',
+    input_schema: {
+      type: 'object',
+      properties: { motivo: { type: 'string', description: 'Resumen breve' } },
+      required: ['motivo'],
+    },
+  },
+  {
     name: 'pasar_a_humano',
     description:
       'Pausa al asistente en esta conversación para que una persona del equipo atienda. Úsala ante reclamos, devoluciones, pedidos especiales, clientes molestos, pedidos de hablar con una persona o preguntas que no puedes responder con la información disponible.',
@@ -263,6 +292,32 @@ async function runTool(tu, st, ctx) {
       log('info', 'pedido registrado', { codigo, total_bs: total });
       st.comprobante = false;
       return JSON.stringify({ ok: true, codigo, total_bs: total });
+    }
+
+    if (tu.name === 'calcular_total') {
+      const items = tu.input?.items;
+      if (!Array.isArray(items) || !items.length) return JSON.stringify({ ok: false, error: 'Sin productos' });
+      const lineas = [];
+      let total = 0;
+      for (const it of items) {
+        const prod = catalogo.get(it.id);
+        const cant = Number(it.cantidad);
+        if (!prod) return JSON.stringify({ ok: false, error: `Producto inexistente: ${it.id}` });
+        if (prod.venta === 'persona') return JSON.stringify({ ok: false, error: `${prod.nombre} lo cierra una persona del equipo: usa pasar_a_humano.` });
+        if (typeof prod.precio_bs !== 'number') return JSON.stringify({ ok: false, error: `${prod.nombre} no tiene precio: usa pasar_a_humano.` });
+        if (!Number.isInteger(cant) || cant < 1 || cant > 100) return JSON.stringify({ ok: false, error: `Cantidad inválida para ${it.id}` });
+        const sub = prod.precio_bs * cant;
+        total += sub;
+        lineas.push(`${cant} x ${prod.nombre} (Bs ${prod.precio_bs}) = Bs ${sub}`);
+      }
+      return JSON.stringify({ ok: true, lineas, total_bs: total });
+    }
+
+    if (tu.name === 'no_responder') {
+      st.pausedUntil = Date.now() + cfg.handoffHours * 3600_000;
+      ctx.silent = true;
+      log('info', 'chat con transportista: silencio', { convId: ctx.convId, motivo: String(tu.input?.motivo || '').slice(0, 200) });
+      return JSON.stringify({ ok: true, nota: 'No envíes ningún mensaje.' });
     }
 
     if (tu.name === 'pasar_a_humano') {
@@ -400,6 +455,10 @@ async function answer({ convId, accountId, msg }) {
   }
   if (!reply) reply = 'Disculpa, no logré procesar tu mensaje. ¿Podrías repetirlo?';
 
+  if (ctx.silent) {
+    log('info', 'sin respuesta (transportista)', { convId });
+    return;
+  }
   pushTurn(st, 'assistant', reply);
   await sendMessage(convId, accountId, reply);
   log('info', 'respuesta enviada', { convId, chars: reply.length });
@@ -476,6 +535,9 @@ const server = http.createServer((req, res) => {
   res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' }).end('Agente de TG salud y bienestar activo');
 });
 
+process.on('unhandledRejection', (e) => log('error', 'unhandledRejection', { err: String(e).slice(0, 300) }));
+
+server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado, maxMinutosAntiguedad: cfg.maxAgeMinutes }));
 process.on('unhandledRejection', (e) => log('error', 'unhandledRejection', { err: String(e).slice(0, 300) }));
 
 server.listen(cfg.port, () => log('info', `Agente escuchando en el puerto ${cfg.port}`, { modelo: cfg.model, configurado, maxMinutosAntiguedad: cfg.maxAgeMinutes }));
