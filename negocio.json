@@ -151,10 +151,10 @@
       "advertencias": "Producto inyectable. Las dudas de uso las orienta solo el profesional del equipo."
     },
     {
-      "id": "retatrutide-200-vial",
-      "nombre": "Retatrutide 200 mg (vial)",
+      "id": "retatrutide-120-vial",
+      "nombre": "Retatrutide 120 mg (vial)",
       "descripcion": "Triple agonista de los receptores GLP-1, GIP y glucagón.",
-      "presentacion": "Vial de 200 mg.",
+      "presentacion": "Vial de 120 mg.",
       "precio_bs": 1600,
       "disponible": true,
       "venta": "persona",
