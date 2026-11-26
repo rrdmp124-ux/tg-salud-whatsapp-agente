@@ -175,7 +175,7 @@ const TOOLS = [
   {
     name: 'registrar_pedido',
     description:
-      'Registra un pedido confirmado por el cliente. Úsala SOLO cuando el cliente ya dio producto y cantidad, nombre completo y ubicación, y envió el comprobante de pago por QR. El total lo calcula el sistema. El pedido queda pendiente hasta que un profesional del equipo lo valide. No sirve para productos que cierra una persona ni para productos sin precio.',
+      'Registra un pedido confirmado por el cliente. Úsala cuando el cliente ya dijo qué producto quiere y dio su nombre. Si no dijo la cantidad, usa 1 y anótalo en notas. El total lo calcula el sistema. Al registrar, el chat pasa automáticamente a una persona del equipo que finaliza la venta. No sirve para productos que cierra una persona ni para productos sin precio.',
     input_schema: {
       type: 'object',
       properties: {
@@ -192,10 +192,10 @@ const TOOLS = [
             required: ['id', 'cantidad'],
           },
         },
-        entrega: { type: 'string', description: 'Ubicación de entrega: el texto de la ubicación compartida por el cliente (tal como aparece, con [Ubicación compartida: ...]) o la dirección/referencia que escribió' },
+        entrega: { type: 'string', description: 'Solo si el cliente la dio por su cuenta: ubicación o dirección (opcional)' },
         notas: { type: 'string', description: 'Observaciones del cliente (opcional)' },
       },
-      required: ['nombre_cliente', 'items', 'entrega'],
+      required: ['nombre_cliente', 'items'],
     },
   },
   {
@@ -216,6 +216,11 @@ const TOOLS = [
       },
       required: ['items'],
     },
+  },
+  {
+    name: 'ver_catalogo',
+    description: 'Devuelve el catálogo completo con precios, ya formateado. Úsala cuando el cliente pida el catálogo, la lista de productos o los precios en general, y envía el texto tal cual, sin cambiar nombres ni precios.',
+    input_schema: { type: 'object', properties: {} },
   },
   {
     name: 'no_responder',
@@ -243,7 +248,6 @@ async function runTool(tu, st, ctx) {
   try {
     if (tu.name === 'registrar_pedido') {
       const { nombre_cliente, items, entrega, notas } = tu.input || {};
-      if (!st.comprobante) return JSON.stringify({ ok: false, error: 'Aún no llegó el comprobante de pago (imagen). Pídelo; no registres sin él.' });
       if (!Array.isArray(items) || !items.length) return JSON.stringify({ ok: false, error: 'El pedido no tiene productos' });
       const detalle = [];
       let total = 0;
@@ -265,13 +269,12 @@ async function runTool(tu, st, ctx) {
         conversationId: ctx.convId,
         cliente_whatsapp: ctx.cliente,
         nombre_cliente,
-        entrega,
-        metodo_pago: 'QR',
-        comprobante_recibido: true,
+        entrega: entrega || '',
+        comprobante_recibido: !!st.comprobante,
         notas: notas || '',
         items: detalle,
         total_bs: total,
-        estado: 'pendiente de validación del pago por el profesional',
+        estado: 'pendiente: una persona del equipo finaliza la venta',
       };
       try {
         fs.appendFileSync(cfg.ordersFile, JSON.stringify(pedido) + '\n');
@@ -291,7 +294,8 @@ async function runTool(tu, st, ctx) {
       }
       log('info', 'pedido registrado', { codigo, total_bs: total });
       st.comprobante = false;
-      return JSON.stringify({ ok: true, codigo, total_bs: total });
+      st.pausedUntil = Date.now() + cfg.handoffHours * 3600_000; // una persona finaliza la venta
+      return JSON.stringify({ ok: true, codigo, total_bs: total, nota: 'Pedido registrado. Una persona del equipo finalizará la venta; el asistente queda en pausa en este chat.' });
     }
 
     if (tu.name === 'calcular_total') {
@@ -311,6 +315,13 @@ async function runTool(tu, st, ctx) {
         lineas.push(`${cant} x ${prod.nombre} (Bs ${prod.precio_bs}) = Bs ${sub}`);
       }
       return JSON.stringify({ ok: true, lineas, total_bs: total });
+    }
+
+    if (tu.name === 'ver_catalogo') {
+      const lineas = [...catalogo.values()].map(
+        (p) => `• ${p.nombre} — ${typeof p.precio_bs === 'number' ? `Bs ${p.precio_bs}` : 'precio por confirmar con el equipo'}`,
+      );
+      return JSON.stringify({ ok: true, catalogo: lineas.join('\n') });
     }
 
     if (tu.name === 'no_responder') {
@@ -346,7 +357,7 @@ async function callAnthropic(messages) {
       },
       body: JSON.stringify({
         model: cfg.model,
-        max_tokens: 350,
+        max_tokens: 1200,
         system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
         tools: TOOLS,
         messages,
@@ -426,7 +437,7 @@ async function answer({ convId, accountId, msg }) {
     const tipo = String(adj[0]?.type || msg.type || msg.messageType || '').toLowerCase();
     if (adj.length && /image|photo|document|file|pdf|sticker/.test(tipo || 'image')) {
       st.comprobante = true;
-      text = '[El cliente envió una imagen/archivo (posible comprobante de pago)]';
+      text = '[El cliente envió una imagen o archivo]';
     }
   }
   if (!text) {
