@@ -4,11 +4,11 @@
   "nombre": "TG salud y bienestar",
   "descripcion": "TG salud y bienestar ofrece productos de bienestar. Un profesional certificado del equipo atiende los pedidos y los valida.",
   "ciudad_cobertura": "",
-  "horario_atencion_humana": "",
-  "entrega": "Envíos: el cliente envía nombre completo, ubicación y comprobante del pago por QR; el equipo valida el pago y coordina el envío.",
+  "horario_atencion_humana": "Atención digital las 24 horas, todos los días. El local está abierto de 7:00 a 20:00.",
+  "entrega": "Después de registrar el pedido, una persona del equipo continúa el chat para finalizar la venta (pago y entrega).",
   "costo_envio": "",
   "formas_de_pago": [
-    "Solo por QR. El cliente envía la foto del comprobante de pago."
+    "Pago por QR: lo coordina una persona del equipo al finalizar la venta."
   ],
   "politicas": [
     "Todo pedido queda pendiente hasta que un profesional certificado del equipo lo valide; recién entonces se coordina el pago y el envío.",
